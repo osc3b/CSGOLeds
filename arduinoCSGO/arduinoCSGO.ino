@@ -29,11 +29,24 @@ void loop() {
   memset(leds, 0, NUM_LEDS * sizeof(struct CRGB));
   // Read the transmission data and set LED values
   while(!Serial.available());
-  if(Serial.read() == '1'){
+  switch(Serial.read()){
+    case '1':
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
       leds[i].setRGB(0,255,0); //Pone todos los leds a verde
     }
     // Shows new values
     FastLED.show();
+    break;
+    case '2':
+    for (uint8_t i = 0; i < NUM_LEDS; i++) {
+      leds[i].setRGB(255,0,0); //Pone todos los leds a rojo
+    }
+    FastLED.show();
+    delay(1000);
+    for (uint8_t i = 0; i < NUM_LEDS; i++) {
+      leds[i].setRGB(0,0,0); //Pone todos los leds a negro
+    }
+    FastLED.show();
+    break;
   }
 }

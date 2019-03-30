@@ -5,13 +5,15 @@ import com.panamahitek.PanamaHitek_Arduino;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
+import com.brekcel.csgostate.*;
+import java.io.IOException;
 
 /**
  *
  * @author osc3b
  */
 public class CSGOLeds {
-    PanamaHitek_Arduino arduino = new PanamaHitek_Arduino();
+    static PanamaHitek_Arduino arduino = new PanamaHitek_Arduino();
     boolean ejecutando = true;
     
     public CSGOLeds(){
@@ -38,10 +40,14 @@ public class CSGOLeds {
         }
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         CSGOLeds main = new CSGOLeds();
-        //while(main.ejecutando){
-        //TODO Comprobaciones del juego
-        //}
+        CSGOVariables csgo = new CSGOVariables();
+        Server server = new Server(1338, csgo, true);
+        while(main.ejecutando){
+            //TODO Comprobaciones del juego
+            //int vida = server.getCurrentJSR().getPlayer().getState().getHealth();
+            //System.out.println("AHORA LA VIDA DEL JUGADOR EEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + vida);
+        }
     }
 }

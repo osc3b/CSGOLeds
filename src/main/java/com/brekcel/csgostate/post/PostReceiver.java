@@ -16,8 +16,11 @@ import com.brekcel.csgostate.JSON.Round;
 import com.brekcel.csgostate.JSON.State;
 import com.brekcel.csgostate.JSON.Weapon;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PostReceiver implements HttpHandler {
 	private PostHandler handle;
@@ -30,24 +33,24 @@ public class PostReceiver implements HttpHandler {
 		this.serv = serv;
 		this.handle = handle;
 		gson = new Gson();
-		try {
-			new File("A:/csgoLog.txt").createNewFile();
-			writer = new BufferedWriter(new FileWriter(new File("A:/csgoLog.txt"), true));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            try {
+                new File("I:/csgoLog.txt").createNewFile();
+                writer = new BufferedWriter(new FileWriter(new File("I:/csgoLog.txt"), true));
+            } catch (IOException ex) {
+                Logger.getLogger(PostReceiver.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	}
 
 	@Override
 	public void handle(HttpExchange exc) throws IOException {
-		StringBuffer response = new StringBuffer();
-		StringBuffer printResponse = new StringBuffer();
+		StringBuilder response = new StringBuilder();
+		StringBuilder printResponse = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(exc.getRequestBody()));
 			String inl;
 			while ((inl = in.readLine()) != null) {
 				response.append(inl);
-				printResponse.append(inl + "\n");
+				printResponse.append(inl).append("\n");
 			}
 			in.close();
 			writer.write(response.toString());
@@ -61,9 +64,8 @@ public class PostReceiver implements HttpHandler {
 			exc.sendResponseHeaders(200, -1);
 			// System.out.println(response.toString());
 			callMethods(jsr);
-		} catch (Exception e) {
+		} catch (JsonSyntaxException | IOException e) {
 			System.out.println(printResponse.toString());
-			e.printStackTrace();
 		}
 	}
 
