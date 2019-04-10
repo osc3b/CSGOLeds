@@ -34,8 +34,8 @@ public class PostReceiver implements HttpHandler {
 		this.handle = handle;
 		gson = new Gson();
             try {
-                new File("I:/csgoLog.txt").createNewFile();
-                writer = new BufferedWriter(new FileWriter(new File("I:/csgoLog.txt"), true));
+                new File("D:/csgoLog.txt").createNewFile();
+                writer = new BufferedWriter(new FileWriter(new File("D:/csgoLog.txt"), true));
             } catch (IOException ex) {
                 Logger.getLogger(PostReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -47,7 +47,7 @@ public class CSGOLeds {
         while(main.ejecutando){
             //TODO Comprobaciones del juego
             //int vida = server.getCurrentJSR().getPlayer().getState().getHealth();
-            //System.out.println("AHORA LA VIDA DEL JUGADOR EEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + vida);
+            //System.out.println("AHORA LA VIDA DEL JUGADOR ES: " + vida);
         }
     }
 }
