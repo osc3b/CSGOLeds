@@ -1,10 +1,7 @@
 
 package me.osc3b.csgoleds;
-import com.panamahitek.ArduinoException;
-import com.panamahitek.PanamaHitek_Arduino;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jssc.SerialPortException;
 import com.brekcel.csgostate.*;
 import java.io.IOException;
 
