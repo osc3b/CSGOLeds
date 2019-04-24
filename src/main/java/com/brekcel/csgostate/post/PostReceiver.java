@@ -34,8 +34,8 @@ public class PostReceiver implements HttpHandler {
 		this.handle = handle;
 		gson = new Gson();
             try {
-                new File("D:/csgoLog.txt").createNewFile();
-                writer = new BufferedWriter(new FileWriter(new File("D:/csgoLog.txt"), true));
+                new File("I:/csgoLog.txt").createNewFile();
+                writer = new BufferedWriter(new FileWriter(new File("I:/csgoLog.txt"), true));
             } catch (IOException ex) {
                 Logger.getLogger(PostReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -62,7 +62,7 @@ public class PostReceiver implements HttpHandler {
 				return;
 			}
 			exc.sendResponseHeaders(200, -1);
-			// System.out.println(response.toString());
+			//System.out.println(response.toString());
 			callMethods(jsr);
 		} catch (JsonSyntaxException | IOException e) {
 			System.out.println(printResponse.toString());

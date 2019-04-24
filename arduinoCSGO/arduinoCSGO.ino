@@ -1,15 +1,15 @@
 #include "FastLED.h"
 
-#define NUM_LEDS 96
+#define NUM_LEDS 110
 #define DATA_PIN 6
 
 // Baudrate
-#define serialRate 1000000
+#define serialRate 500000
 
 // Inicializar LED-array
 CRGB leds[NUM_LEDS];
 int vida = 100; //Porcentaje Vida
-boolean libre = true; //Saber cuando esta libre
+boolean libre; //Saber cuando esta libre
 int ancho, alto; 
 
 void setup() {
@@ -25,49 +25,93 @@ void setup() {
   LEDS.showColor(CRGB(0, 0, 0));
    
   Serial.begin(serialRate); //Comenzar la comunicación
-  float fAlto = NUM_LEDS * (((16/9)*2)+2);
+  Serial.setTimeout(1);
+  float fAlto = NUM_LEDS/(((16.0/9)*2)+2);
   alto = round(fAlto);
-  ancho = round(fAlto * (16/9));
+  ancho = round(fAlto*(16.0/9));
+  libre = true;
+  Serial.print(ancho);
+  Serial.print("x"); 
+  Serial.println(alto);
+  Serial.println("Programa listo para recibir");
+  mostrarVida();
 }
 
 void loop() {  
-  memset(leds, 0, NUM_LEDS * sizeof(struct CRGB));
+  //memset(leds, 0, NUM_LEDS * sizeof(struct CRGB));
   /*RECOGIDA DE DATOS*/
   while(!Serial.available());
-  int in = Serial.read();
-  switch(in){
-    case '1':
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i].setRGB(0,255,0); //Pone todos los leds a verde
-    }
-    // Mostrar en LEDs
-    FastLED.show();
-    break;
-    case '2':
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i].setRGB(255,0,0); //Pone todos los leds a rojo
-    }
-    FastLED.show();
-    delay(1000);
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i].setRGB(0,0,0); //Pone todos los leds a negro
-    }
-    FastLED.show();
-    break;
-  }
+  int in = Serial.parseInt();
+  Serial.print("He recibido: "); 
+  Serial.println(in);
+  /* CAMBIO DE VIDA */
   if(in >= 500 && in <= 600){
     vida = in - 500;
+    Serial.print("Vida: "); 
+    Serial.println(vida);
+    mostrarVida();
   }
-  /*MOSTRAR VIDA*/
+  /* EVENTOS */
+  if(libre){
+    switch(in){
+      /* EL JUGADOR REALIZA UNA KILL */
+      case 1: //KILL
+      libre = false;
+      //Serial.println("Has matado a uno");
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i].setRGB(255,0,0); //Pone todos los leds a rojo
+      }
+      FastLED.show();
+      delay(1000);
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i].setRGB(0,0,0); //Pone todos los leds a negro
+      }
+      FastLED.show();
+      libre = true;
+      mostrarVida();
+      break;
+      /* EL JUGADOR HA SIDO FLASHEADO */
+      case 2: //FLASH
+      libre = false;
+      //Serial.println("Flash!");
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i].setRGB(255,255,255); //Pone todos los leds a blanco
+      }
+      FastLED.show();
+      delay(2000);
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i].setRGB(0,0,0); //Pone todos los leds a negro
+      }
+      FastLED.show();
+      libre = true;
+      mostrarVida();
+      break;
+    }
+  }
+}
+
+/*MOSTRAR VIDA*/
+void mostrarVida(){
   if(libre){
     if(vida==100){
       for (int i = 0; i < NUM_LEDS; i++) {
         leds[i].setRGB(0,255,0); //Pone todos los leds a verde
       }
+      FastLED.show();
     } else {
-      int nLeds = round((2*alto + ancho)/100*vida);
-      Serial.println(nLeds);
-      mostrarNleds(nLeds, 0, 255, 0);
+      int nLeds = round(((float)(2*alto + ancho)/100)*vida);
+      if(vida >= 75)
+        mostrarNleds(nLeds, 0, 255, 0);
+      else{
+        if(vida >= 50)
+          mostrarNleds(nLeds, 255, 255, 0);
+        else{
+          if(vida >= 25)
+            mostrarNleds(nLeds, 255, 165, 0);
+          else
+            mostrarNleds(nLeds, 255, 0, 0);
+        }
+      }
     }
   }
 }

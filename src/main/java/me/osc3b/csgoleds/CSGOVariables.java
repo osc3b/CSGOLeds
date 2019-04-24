@@ -11,34 +11,25 @@ package me.osc3b.csgoleds;
  */
 
 import com.brekcel.csgostate.post.PostHandlerAdapter;
-import com.panamahitek.ArduinoException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import jssc.SerialPortException;
 import com.brekcel.csgostate.JSON.*;
 
 public class CSGOVariables extends PostHandlerAdapter {
     @Override
     public void playerHealthChange(int health) { 
         System.out.println(" % La vida del jugador a cambiado a: " + health);
-        if(health != 100){
-            try {
-                CSGOLeds.arduino.sendData("2");
-                CSGOLeds.arduino.sendData(Integer.toString(health+500));
-            } catch (ArduinoException | SerialPortException ex) {
-                Logger.getLogger(CSGOVariables.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        CSGOLeds.arduino.serialWrite(Integer.toString(health+500));
     }
 
     @Override
     public void playerMatchKillsChange(int kills) {
         System.out.println("***** Nueva kill. Kills: " + kills + " *****");
-        try {
-            CSGOLeds.arduino.sendData("3");
-        } catch (ArduinoException | SerialPortException ex) {
-            Logger.getLogger(CSGOVariables.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        CSGOLeds.arduino.serialWrite('1');
+    }
+    
+    @Override
+    public void playerFlashedChange(int flashed){
+        System.out.println("***** FLASHED ******");
+        CSGOLeds.arduino.serialWrite('2');
     }
     
     @Override
