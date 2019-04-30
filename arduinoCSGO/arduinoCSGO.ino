@@ -9,7 +9,7 @@
 // Inicializar LED-array
 CRGB leds[NUM_LEDS];
 int vida = 100; //Porcentaje Vida
-boolean libre; //Saber cuando esta libre
+boolean libre = true; //Saber cuando esta libre
 int ancho, alto; 
 
 void setup() {
@@ -29,7 +29,6 @@ void setup() {
   float fAlto = NUM_LEDS/(((16.0/9)*2)+2);
   alto = round(fAlto);
   ancho = round(fAlto*(16.0/9));
-  libre = true;
   Serial.print(ancho);
   Serial.print("x"); 
   Serial.println(alto);
@@ -63,26 +62,58 @@ void loop() {
       }
       FastLED.show();
       delay(1000);
-      for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i].setRGB(0,0,0); //Pone todos los leds a negro
-      }
-      FastLED.show();
       libre = true;
       mostrarVida();
       break;
       /* EL JUGADOR HA SIDO FLASHEADO */
       case 2: //FLASH
       libre = false;
-      //Serial.println("Flash!");
+      Serial.println("Flash!");
       for (int i = 0; i < NUM_LEDS; i++) {
         leds[i].setRGB(255,255,255); //Pone todos los leds a blanco
       }
       FastLED.show();
       delay(2000);
+      libre = true;
+      mostrarVida();
+      break;
+      /*RONDA GANADA Y PERDIDA*/
+      case 3: //GANADA
+      libre = false;
       for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i].setRGB(0,0,0); //Pone todos los leds a negro
+        leds[i].setRGB(255,255,0); //Pone todos los leds a amarillo, paulativamente
+        FastLED.show();
+        delay(5);
       }
-      FastLED.show();
+      delay(1000);
+      for (int i = NUM_LEDS-1; i >= 0; i--) {
+        leds[i].setRGB(0,0,0); //Pone todos los leds a amarillo, paulativamente
+        FastLED.show();
+        delay(5);
+      }
+      libre = true;
+      mostrarVida();
+      break;
+      /* RONDA PERDIDA */
+      case 4: //PERDIDA
+      libre = false;
+      int j = (2*alto + ancho)/2;
+      for (int i = (2*alto + ancho)/2; i < 2*alto + ancho && j >=0; i++) {
+        leds[i].setRGB(255,0,0); //Pone la mitad de allos led en rojo
+        leds[j].setRGB(255,0,0);
+        FastLED.show();
+        delay(10);
+        j--;
+      }
+      j = (2*alto + ancho)/2;
+      for (int i = (2*alto + ancho)/2; i < 2*alto + ancho && j >=0; i++) {
+        leds[i].setRGB(0,0,0); //Pone la mitad de allos led en rojo
+        leds[j].setRGB(0,0,0);
+        FastLED.show();
+        delay(10);
+        j--;
+      }
+      delay(2000);
       libre = true;
       mostrarVida();
       break;
@@ -94,10 +125,7 @@ void loop() {
 void mostrarVida(){
   if(libre){
     if(vida==100){
-      for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i].setRGB(0,255,0); //Pone todos los leds a verde
-      }
-      FastLED.show();
+      mostrarNleds(2*alto + ancho, 0, 255, 0);
     } else {
       int nLeds = round(((float)(2*alto + ancho)/100)*vida);
       if(vida >= 75)
@@ -118,8 +146,10 @@ void mostrarVida(){
 
 /*Con esta linea enviamos tanto el numero de leds (n), como los colores (r,g,b)*/
 void mostrarNleds(int n, int r, int g, int b){
-  int fin = (2*alto + ancho) - 1;
-  int inicio = fin - n;
+  int fin = (2*alto + ancho);
+  int inicio = 1;
+  if(fin > n)
+    inicio = fin - n;
   for (int i = 0; i < NUM_LEDS; i++) {
     leds[i].setRGB(0,0,0); //Pone todos los leds a negro
   }

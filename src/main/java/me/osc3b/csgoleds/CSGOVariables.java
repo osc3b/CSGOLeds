@@ -11,9 +11,12 @@ package me.osc3b.csgoleds;
  */
 
 import com.brekcel.csgostate.post.PostHandlerAdapter;
-import com.brekcel.csgostate.JSON.*;
 
 public class CSGOVariables extends PostHandlerAdapter {
+    
+    int killsguardadas = 0;
+    String teamAct = "NULL";
+    
     @Override
     public void playerHealthChange(int health) { 
         System.out.println(" % La vida del jugador a cambiado a: " + health);
@@ -23,7 +26,10 @@ public class CSGOVariables extends PostHandlerAdapter {
     @Override
     public void playerMatchKillsChange(int kills) {
         System.out.println("***** Nueva kill. Kills: " + kills + " *****");
-        CSGOLeds.arduino.serialWrite('1');
+        if(kills > killsguardadas){
+            CSGOLeds.arduino.serialWrite('1');
+            killsguardadas = kills;
+        }
     }
     
     @Override
@@ -33,7 +39,23 @@ public class CSGOVariables extends PostHandlerAdapter {
     }
     
     @Override
-    public void newRound(Round round){
+    public void roundChange(int round){
         System.out.println("======================================\n Nueva ronda \n==============================================");
+    }
+    
+    @Override
+    public void playerTeamChange(String team){
+        teamAct = team;
+    }
+    
+    @Override
+    public void roundWinningTeamChange(String team){
+        if(team.equals(teamAct)){
+            System.out.println("RONDA GANADA\n");
+            CSGOLeds.arduino.serialWrite('3');
+        }else{
+            System.out.println("RONDA PERDIDA\n");
+            CSGOLeds.arduino.serialWrite('4');
+        }
     }
 }

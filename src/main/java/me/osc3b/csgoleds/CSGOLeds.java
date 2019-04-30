@@ -13,6 +13,7 @@ import arduino.*;
 public class CSGOLeds {
     static Arduino arduino = new Arduino("COM3", 500000);
     boolean ejecutando = true;
+    static Server server;
     
     public CSGOLeds(){
         if(arduino.openConnection()){
@@ -30,7 +31,7 @@ public class CSGOLeds {
     public static void main(String[] args) throws IOException {
         CSGOLeds main = new CSGOLeds();
         CSGOVariables csgo = new CSGOVariables();
-        Server server = new Server(1338, csgo, true);
+        server = new Server(1338, csgo, true);
         while(main.ejecutando){
             //TODO Comprobaciones del juego
             //int vida = server.getCurrentJSR().getPlayer().getState().getHealth();
