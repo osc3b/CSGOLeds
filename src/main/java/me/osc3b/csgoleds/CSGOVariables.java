@@ -10,15 +10,14 @@ package me.osc3b.csgoleds;
  * @author Oscar
  */
 
-import com.brekcel.csgostate.JSON.Weapon;
+//import com.brekcel.csgostate.JSON.Weapon;
 import com.brekcel.csgostate.post.PostHandlerAdapter;
-import static java.lang.Math.round;
 
 public class CSGOVariables extends PostHandlerAdapter {
     
     int killsguardadas = 0;
     String teamAct = "NULL";
-    int porcentajeCargador = 0;
+    //int porcentajeCargador = 0;
     
     @Override
     public void playerHealthChange(int health) { 
@@ -27,7 +26,7 @@ public class CSGOVariables extends PostHandlerAdapter {
     }
 
     @Override
-    public void playerRoundKillsChange(int kills) {
+    public void playerMatchKillsChange(int kills) {
         System.out.println("***** Nueva kill. Kills: " + kills + " *****");
         if(kills > killsguardadas){
             CSGOLeds.arduino.serialWrite('1');
@@ -38,19 +37,20 @@ public class CSGOVariables extends PostHandlerAdapter {
     @Override
     public void playerFlashedChange(int flashed){
         System.out.println("***** FLASHED " + flashed + "******");
-        if(flashed > 180) //De 0 a 255
+        if(flashed >= 150) //De 0 a 255
             CSGOLeds.arduino.serialWrite('2');
     }
     
-    @Override
+    /*@Override
     public void roundReset(){
         System.out.println("======================================\n Nueva ronda \n==============================================");
         killsguardadas = 0;
-    }
+    }*/
     
     @Override
     public void playerTeamChange(String team){
         teamAct = team;
+        killsguardadas = 0;
     }
     
     @Override
@@ -82,7 +82,7 @@ public class CSGOVariables extends PostHandlerAdapter {
         CSGOLeds.arduino.serialWrite('7');
     }
     
-    @Override
+    /*@Override
     public void weaponActiveChange(Weapon weapon){
         System.out.println("Arma cambiada a: " + weapon.getName());
         System.out.println("(C) Balas en el cargador: " + weapon.getAmmoClip() + "/" + weapon.getAmmoClipMax());
@@ -103,6 +103,6 @@ public class CSGOVariables extends PostHandlerAdapter {
         System.out.println("(R) Balas en el cargador: " + weapon.getAmmoClip() + "/" + weapon.getAmmoClipMax());
         porcentajeCargador = 100;
         CSGOLeds.arduino.serialWrite(Integer.toString(400));
-    }
+    }*/
 }
 
